@@ -1,6 +1,6 @@
 /* KTM_DLL
 *
-* Copyright (c) 2017
+* Copyright (c) 2017, SECUREONETWO
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification,
