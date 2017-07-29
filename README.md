@@ -1,9 +1,10 @@
 # KTM_GADGET
 Instrument closed source software to use the Kernel Transaction Manager on 
 Windows Vista through Windows 10. KTM_GADGET intercepts calls to many(!) 
-file and registery API functions.  If a program returns 0, all outstanding 
-file and registry operations are committed. All other return values cause 
-KTM_GADGET to roll back any filesystem or registry changes.
+file and registry API functions, see the caveat below.  If a program 
+returns 0, all outstanding file and registry operations are committed. All 
+other return values cause KTM_GADGET to roll back any file system or 
+registry changes.
 
 **Intercepted API**
 
@@ -52,3 +53,8 @@ KTM_GADGET doesn't support software that calls directly into ntdll.
 Functions including NtOpenFile will directly and completely bypass 
 KTM_GADGET. This especially effects cmd.exe, which uses fancy low level 
 system calls to implement some commands.
+
+**License**
+KTM_GADGET is released under the two-clause BSD license. KTM_DLL 
+contains a gently modified version of libudis86, which is also licenced
+under the two-clause BSD license.

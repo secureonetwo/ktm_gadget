@@ -229,7 +229,7 @@ int patch_functions(PtrTable_t *patch_table)
 		);
 
 		size_t real_offset = jt_pos;
-		// copy bytes to ammend
+		// copy bytes to amend
 		if (memcpy_s(jumptable + jt_pos, jt_len - jt_pos, function_location, amend_length) != 0)
 		{
 			// Error

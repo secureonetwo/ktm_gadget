@@ -33,7 +33,7 @@
  * Features:
  * |_ UTF-16 and ASCII support in the same API.
  * |_ Overflow safe.
- * |_ Guarenteed NULL character.
+ * |_ Guaranteed NULL character.
  *
  * Usage notes:
  * |_ All functions take number of elements, excluding NULL element, not bytes.
