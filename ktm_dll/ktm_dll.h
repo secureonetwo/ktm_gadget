@@ -79,6 +79,24 @@ static KTM_CreateProcessW_t CreateProcessW_real = CreateProcessW;
 static KTM_RemoveDirectoryW_t RemoveDirectoryW_real = RemoveDirectoryW;
 static KTM_RemoveDirectoryA_t RemoveDirectoryA_real = RemoveDirectoryA;
 
+NTSTATUS ZwCreateFile(
+	_Out_    PHANDLE            FileHandle,
+	_In_     ACCESS_MASK        DesiredAccess,
+	_In_     void              *ObjectAttributes,
+	_Out_    void              *IoStatusBlock,
+	_In_opt_ PLARGE_INTEGER     AllocationSize,
+	_In_     ULONG              FileAttributes,
+	_In_     ULONG              ShareAccess,
+	_In_     ULONG              CreateDisposition,
+	_In_     ULONG              CreateOptions,
+	_In_opt_ PVOID              EaBuffer,
+	_In_     ULONG              EaLength
+);
+NTSTATUS NTAPI RtlSetCurrentTransaction(HANDLE h);
+
+extern KTM_ZwCreateFile_t ZwCreateFile_real;
+extern KTM_RtlSetCurrentTransaction_t RtlSetCurrentTransaction_real;
+
 static char * CreateFileA_name = "CreateFileA";
 static char * CreateFileW_name = "CreateFileW";
 static char * FindFirstFileExA_name = "FindFirstFileExA";
@@ -117,6 +135,7 @@ static char * CreateProcessA_name = "CreateProcessA";
 static char * CreateProcessW_name = "CreateProcessW";
 static char * RemoveDirectoryW_name = "RemoveDirectoryW";
 static char * RemoveDirectoryA_name = "RemoveDirectoryA";
+static char * ZwCreateFile_name = "ZwCreateFile";
 
 extern PtrTable_t PtrTable[];
 int patch_functions(PtrTable_t *patch_table);

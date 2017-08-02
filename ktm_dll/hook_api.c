@@ -109,6 +109,17 @@ void * decode_jump(ud_t *u, uint8_t * location)
 	{
 		base = (uint8_t*)(size_t)u->operand[0].lval.udword;
 	}
+	else if (u->operand[0].type == UD_OP_JIMM)
+	{
+		base = location + len;
+
+		const uint64_t trunc_mask = 0xffffffffffffffffull >> (64 - u->opr_mode);
+		switch (u->operand[0].size) {
+			case 8: base += u->operand[0].lval.sbyte  & trunc_mask;
+			case 16: base += u->operand[0].lval.sword  & trunc_mask;
+			case 32: base += u->operand[0].lval.sdword & trunc_mask;
+		}
+	}
 	else
 	{
 		goto error;
@@ -192,6 +203,7 @@ int patch_functions(PtrTable_t *patch_table)
 	int ret = 0;
 	ud_t u;
 	void * function_location;
+	void * jmp_location;
 	size_t amend_length;
 	size_t jt_pos = 0;
 	size_t jt_len = 4096;
@@ -217,11 +229,12 @@ int patch_functions(PtrTable_t *patch_table)
 	{
 		int reg_map = 0;
 
-		function_location = decode_jump(&u, *(uint8_t**)patch_table->real_ptr);
-		if (function_location == 0)
+		function_location = *(uint8_t**)patch_table->real_ptr;
+		while (jmp_location = decode_jump(&u, function_location))
 		{
-			function_location = *(uint8_t**)patch_table->real_ptr;
+			function_location = jmp_location;
 		}
+		
 		amend_length = calc_length(&u, (uint8_t*)function_location, sizeof(patch_template)
 #ifdef _WIN64
 			, &reg_map

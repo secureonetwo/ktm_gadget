@@ -225,7 +225,6 @@ void create_suspended(sb_str_t *run_cmd, PROCESS_INFORMATION *ProcessInfo)
 	}
 }
 
-
 int __cdecl _tmain(int argc, TCHAR ** argv)
 {
 #if _UNICODE

@@ -707,51 +707,88 @@ error:
 	return FALSE;
 }
 
-PtrTable_t PtrTable[] =
+NTSTATUS NTAPI ZwCreateFile_imp(
+	_Out_    PHANDLE            FileHandle,
+	_In_     ACCESS_MASK        DesiredAccess,
+	_In_     void              *ObjectAttributes,
+	_Out_    void              *IoStatusBlock,
+	_In_opt_ PLARGE_INTEGER     AllocationSize,
+	_In_     ULONG              FileAttributes,
+	_In_     ULONG              ShareAccess,
+	_In_     ULONG              CreateDisposition,
+	_In_     ULONG              CreateOptions,
+	_In_opt_ PVOID              EaBuffer,
+	_In_     ULONG              EaLength
+)
 {
-	{ &CreateFileA_real, CreateFileA_imp },
-	{ &CreateFileW_real, CreateFileW_imp },
-	{ &FindFirstFileExA_real, FindFirstFileExA_imp },
-	{ &FindFirstFileExW_real, FindFirstFileExW_imp },
-	{ &GetLongPathNameA_real, GetLongPathNameA_imp },
-	{ &GetLongPathNameW_real, GetLongPathNameW_imp },
-	{ &CreateDirectoryExA_real, CreateDirectoryExA_imp },
-	{ &CreateDirectoryExW_real, CreateDirectoryExW_imp },
-	{ &GetFullPathNameA_real, GetFullPathNameA_imp },
-	{ &GetFullPathNameW_real, GetFullPathNameW_imp },
-	{ &SetFileAttributesA_real, SetFileAttributesA_imp },
-	{ &SetFileAttributesW_real, SetFileAttributesW_imp },
-	{ &GetFileAttributesExA_real, GetFileAttributesExA_imp },
-	{ &GetFileAttributesExW_real, GetFileAttributesExW_imp },
-	{ &GetCompressedFileSizeA_real, GetCompressedFileSizeA_imp },
-	{ &GetCompressedFileSizeW_real, GetCompressedFileSizeW_imp },
-	{ &DeleteFileA_real, DeleteFileA_imp },
-	{ &DeleteFileW_real, DeleteFileW_imp },
-	{ &CopyFileExA_real, CopyFileExA_imp },
-	{ &CopyFileExW_real, CopyFileExW_imp },
-	{ &MoveFileWithProgressA_real, MoveFileWithProgressA_imp },
-	{ &MoveFileWithProgressW_real, MoveFileWithProgressW_imp },
-	{ &CreateHardLinkA_real, CreateHardLinkA_imp },
-	{ &CreateHardLinkW_real, CreateHardLinkW_imp },
-	{ &FindFirstStreamW_real, FindFirstStreamW_imp },
-	{ &FindFirstFileNameW_real, FindFirstFileNameW_imp },
-	{ &CreateSymbolicLinkA_real, CreateSymbolicLinkA_imp },
-	{ &CreateSymbolicLinkW_real, CreateSymbolicLinkW_imp },
-	{ &RegCreateKeyExA_real, RegCreateKeyExA_imp },
-	{ &RegCreateKeyExW_real, RegCreateKeyExW_imp },
-	{ &RegDeleteKeyExA_real, RegDeleteKeyExA_imp },
-	{ &RegDeleteKeyExW_real, RegDeleteKeyExW_imp },
-	{ &RegOpenKeyExA_real, RegOpenKeyExA_imp },
-	{ &RegOpenKeyExW_real, RegOpenKeyExW_imp },
-	{ &CreateProcessA_real, CreateProcessA_imp },
-	{ &CreateProcessW_real, CreateProcessW_imp },
-	{ &RemoveDirectoryW_real, RemoveDirectoryW_imp },
-	{ &RemoveDirectoryA_real, RemoveDirectoryA_imp },
-	{NULL,NULL}
-};
+	RtlSetCurrentTransaction_real(_GLOBAL_TX_HANDLE);
+
+	NTSTATUS ret = ZwCreateFile_real(FileHandle,
+		DesiredAccess,
+		ObjectAttributes,
+		IoStatusBlock,
+		AllocationSize,
+		FileAttributes,
+		ShareAccess,
+		CreateDisposition,
+		CreateOptions,
+		EaBuffer,
+		EaLength);
+
+	RtlSetCurrentTransaction_real(0);
+
+	return ret;
+}
 
 HANDLE _GLOBAL_TX_HANDLE;
 __declspec(thread) BOOL IN_TX = FALSE;
 sb_str_t * mp_64 = NULL;
 sb_str_t * mp_32 = NULL;
 sb_str_t * mp_hdl = NULL;
+KTM_ZwCreateFile_t ZwCreateFile_real = NULL;
+KTM_RtlSetCurrentTransaction_t RtlSetCurrentTransaction_real = NULL;
+
+PtrTable_t PtrTable[] =
+{
+	{ &ZwCreateFile_real, ZwCreateFile_imp },
+	{ &CreateProcessA_real, CreateProcessA_imp },
+	{ &CreateProcessW_real, CreateProcessW_imp },
+	{ NULL,NULL },
+	//{ NULL,NULL },
+	//{ &CreateFileA_real, CreateFileA_imp },
+	//{ &CreateFileW_real, CreateFileW_imp },
+	//{ &FindFirstFileExA_real, FindFirstFileExA_imp },
+	//{ &FindFirstFileExW_real, FindFirstFileExW_imp },
+	//{ &GetLongPathNameA_real, GetLongPathNameA_imp },
+	//{ &GetLongPathNameW_real, GetLongPathNameW_imp },
+	//{ &CreateDirectoryExA_real, CreateDirectoryExA_imp },
+	//{ &CreateDirectoryExW_real, CreateDirectoryExW_imp },
+	//{ &GetFullPathNameA_real, GetFullPathNameA_imp },
+	//{ &GetFullPathNameW_real, GetFullPathNameW_imp },
+	//{ &SetFileAttributesA_real, SetFileAttributesA_imp },
+	//{ &SetFileAttributesW_real, SetFileAttributesW_imp },
+	//{ &GetFileAttributesExA_real, GetFileAttributesExA_imp },
+	//{ &GetFileAttributesExW_real, GetFileAttributesExW_imp },
+	//{ &GetCompressedFileSizeA_real, GetCompressedFileSizeA_imp },
+	//{ &GetCompressedFileSizeW_real, GetCompressedFileSizeW_imp },
+	//{ &DeleteFileA_real, DeleteFileA_imp },
+	//{ &DeleteFileW_real, DeleteFileW_imp },
+	//{ &CopyFileExA_real, CopyFileExA_imp },
+	//{ &CopyFileExW_real, CopyFileExW_imp },
+	//{ &MoveFileWithProgressA_real, MoveFileWithProgressA_imp },
+	//{ &MoveFileWithProgressW_real, MoveFileWithProgressW_imp },
+	//{ &CreateHardLinkA_real, CreateHardLinkA_imp },
+	//{ &CreateHardLinkW_real, CreateHardLinkW_imp },
+	//{ &FindFirstStreamW_real, FindFirstStreamW_imp },
+	//{ &FindFirstFileNameW_real, FindFirstFileNameW_imp },
+	//{ &CreateSymbolicLinkA_real, CreateSymbolicLinkA_imp },
+	//{ &CreateSymbolicLinkW_real, CreateSymbolicLinkW_imp },
+	//{ &RegCreateKeyExA_real, RegCreateKeyExA_imp },
+	//{ &RegCreateKeyExW_real, RegCreateKeyExW_imp },
+	//{ &RegDeleteKeyExA_real, RegDeleteKeyExA_imp },
+	//{ &RegDeleteKeyExW_real, RegDeleteKeyExW_imp },
+	//{ &RegOpenKeyExA_real, RegOpenKeyExA_imp },
+	//{ &RegOpenKeyExW_real, RegOpenKeyExW_imp },
+	//{ &RemoveDirectoryW_real, RemoveDirectoryW_imp },
+	//{ &RemoveDirectoryA_real, RemoveDirectoryA_imp },
+};

@@ -278,3 +278,19 @@ typedef BOOL(WINAPI *KTM_RemoveDirectoryW_t)(
 typedef BOOL(WINAPI *KTM_RemoveDirectoryA_t)(
 	_In_ LPCSTR lpPathName
 );
+
+typedef NTSTATUS(NTAPI *KTM_ZwCreateFile_t)(
+	_Out_    PHANDLE            FileHandle,
+	_In_     ACCESS_MASK        DesiredAccess,
+	_In_     void              *ObjectAttributes,
+	_Out_    void              *IoStatusBlock,
+	_In_opt_ PLARGE_INTEGER     AllocationSize,
+	_In_     ULONG              FileAttributes,
+	_In_     ULONG              ShareAccess,
+	_In_     ULONG              CreateDisposition,
+	_In_     ULONG              CreateOptions,
+	_In_opt_ PVOID              EaBuffer,
+	_In_     ULONG              EaLength
+);
+
+typedef NTSTATUS(NTAPI *KTM_RtlSetCurrentTransaction_t)(HANDLE h);

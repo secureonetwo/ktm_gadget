@@ -91,6 +91,14 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 	case DLL_PROCESS_ATTACH:
 		{
 			ptrt_p = PtrTable;
+			ZwCreateFile_real = (KTM_ZwCreateFile_t)GetProcAddress(LoadLibraryA("ntdll.dll"), "ZwCreateFile");
+			RtlSetCurrentTransaction_real = (KTM_RtlSetCurrentTransaction_t)GetProcAddress(LoadLibraryA("ntdll.dll"), "RtlSetCurrentTransaction");
+			ptrt_p->real_ptr = &ZwCreateFile_real;
+			if (!ZwCreateFile_real || !RtlSetCurrentTransaction_real)
+			{
+				MessageBoxA(NULL, "COULD NOT FIND NT API.", "KTM", MB_OK | MB_ICONERROR);
+				TerminateProcess(GetCurrentProcess(), 1);
+			}
 
 			init_paths(hModule);
 
@@ -101,6 +109,7 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 				MessageBoxA(NULL, "COULD NOT INJECT API.", "KTM", MB_OK | MB_ICONERROR);
 				TerminateProcess(GetCurrentProcess(), 1);
 			}
+			
 		}
 		break;
 	case DLL_THREAD_ATTACH:
